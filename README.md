@@ -5,4 +5,4 @@
 -password reset using gmail
 -hundreds of different currencies available to choose
 -search your incomes and expenses based on your data
--realtime username and email validation using API CALL
+-realtime username and email validation using API call
