@@ -1,0 +1,23 @@
+{% extends 'admin/base.html' %}
+
+{% load static %}
+
+
+
+{% block branding %}
+
+<h1 id="head">
+    
+    <img src="{% static 'img/Scr.png' %}" alt="logo" style="height: 40px; width: 40px; border-radius: 25%;">
+    income expense
+
+</h1>
+
+{% endblock %}
+
+
+{% block extrastyle %}
+
+  <link rel="stylesheet" href="{% static 'css/adminstyle.css' %}">
+
+{% endblock %}
