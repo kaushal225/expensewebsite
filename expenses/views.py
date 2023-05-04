@@ -28,7 +28,11 @@ def index(request):
     paginator = Paginator(expenses,5)
     page_number=request.GET.get('page')
     page_obj=paginator.get_page(page_number)
-    currency=models.UserPreferences.objects.get(user=request.user).currency
+    currency='no currency set'
+    try:
+        currency=models.UserPreferences.objects.get(user=request.user).currency
+    except Exception:
+        print('user currently have no currency')
     context={
         'expenses':expenses,
         'page_obj':page_obj,

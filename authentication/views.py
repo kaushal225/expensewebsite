@@ -62,7 +62,7 @@ class RegistrationView(View):
 
                 user=User.objects.create_user(username=username,email=email)
                 user.set_password(password)
-                #user.save()
+                user.save()
                 #user.is_active=False
 
                 uidb64=urlsafe_base64_encode(force_bytes(user.pk))
