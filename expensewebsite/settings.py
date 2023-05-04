@@ -29,6 +29,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS=[
+    "http://localhost",
+    "http://0.0.0.0",
+    "https://expensewebsite-production.up.railway.app/",
+]
 
 # Application definition
 
