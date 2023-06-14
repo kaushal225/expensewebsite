@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 import json
 from django.http import JsonResponse
 from userpreferences import models
+from datetime import datetime,timedelta
 
 
 @login_required(login_url='authentication/login')
@@ -99,3 +100,27 @@ def delete_income(request,id):
     income.delete()
     messages.success(request,'successfully removed incomes from your list')
     return redirect('incomes')
+
+def income_category_summary(request):
+    print('hello you are delusional but this is working just fine')
+    todays_date = datetime.now()
+    six_months_ago = todays_date-timedelta(days=180)
+    incomes=Income.objects.filter(owner=request.user,date__gte=six_months_ago,date__lte=todays_date)
+    finalrep={}
+    print(incomes)
+    def get_source(income_obj):
+        return income_obj.source
+    source_list=list(set(map(get_source,incomes)))
+
+    for source in source_list:
+        finalrep[source]=0
+    for income in incomes:
+        finalrep[income.source]+=income.amount
+    #for (key,val) in finalrep:
+        #print((key,val)
+    print('hello')
+    return JsonResponse({'income_category_data':finalrep},safe='false')
+
+
+def stats_view(request):
+    return render(request,'income/stats.html')

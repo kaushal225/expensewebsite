@@ -79,14 +79,21 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'expensewebsite.wsgi.application'
+#WSGI_APPLICATION = 'expensewebsite.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-DATABASE_URL=os.environ.get('DATABSE_URL')
+#DATABASE_URL=os.environ.get('DATABSE_URL')
 DATABASES = {
-    "default": dj_database_url.config(default=DATABASE_URL, conn_max_age=1800),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get('DB_NAME'),
+        "USER": os.environ.get('DB_USER'),
+        "PASSWORD": os.environ.get('DB_USER_PASSWORD'),
+        "HOST": os.environ.get('DB_HOST'),
+        "PORT": "5432",
+    }
 }
 
 
@@ -126,16 +133,17 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'expensewebsite/static')]
+#STATIC_ROOT=os.path.join(BASE_DIR,'static')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-#STATIC_ROOT=os.path.join(BASE_DIR,'static') it was before editing
+ #it was before editing
 
 #after editing
 
-STATIC_URL = "static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "expensewebsite/static")]
+#STATIC_URL = "static/"
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, "expensewebsite/static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
