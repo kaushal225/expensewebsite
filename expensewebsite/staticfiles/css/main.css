@@ -49,7 +49,6 @@
     -webkit-overflow-scrolling: touch;
   }
 
-
   .form-custom{
     margin-bottom: 5px;
   }
@@ -65,3 +64,5 @@
   .show-password-toggle:hover{
       transform: scale(1.2);
   }
+
+  
