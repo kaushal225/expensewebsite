@@ -78,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-#WSGI_APPLICATION = 'expensewebsite.wsgi.application'
+WSGI_APPLICATION = 'expensewebsite.wsgi.application'
 
 
 # Database
@@ -142,9 +142,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #after editing
 
-STATIC_URL = "/static/"
+STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "expensewebsite/static")]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
 #STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 print(STATIC_ROOT)
