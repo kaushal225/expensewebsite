@@ -38,6 +38,7 @@ def index(request):
         'page_obj':page_obj,
         'currency':currency
     }
+    #print(request.current_app)
     return render(request,'expenses/index.html',context)
 
 

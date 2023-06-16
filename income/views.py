@@ -17,7 +17,11 @@ def index(request):
     paginator = Paginator(incomes,5)
     page_number=request.GET.get('page')
     page_obj=paginator.get_page(page_number)
-    currency=models.UserPreferences.objects.get(user=request.user).currency
+    currency='please chose one from general'
+    try:
+        currency=models.UserPreferences.objects.get(user=request.user).currency
+    except Exception as exc:
+        pass
     context={
         'incomes':incomes,
         'page_obj':page_obj,

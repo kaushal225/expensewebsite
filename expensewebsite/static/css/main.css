@@ -1,4 +1,4 @@
-.bd-placeholder-img {
+/*.bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
     -webkit-user-select: none;
@@ -25,13 +25,13 @@
     width: 1.5rem;
     height: 100vh;
   }
-
+*/
   .bi {
     vertical-align: -.125em;
     fill: currentColor;
   }
 
-  .nav-scroller {
+ /* .nav-scroller {
     position: relative;
     z-index: 2;
     height: 2.75rem;
@@ -48,7 +48,7 @@
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
   }
-
+*/
 
   .form-custom{
     margin-bottom: 5px;
@@ -65,3 +65,5 @@
   .show-password-toggle:hover{
       transform: scale(1.2);
   }
+
+  
