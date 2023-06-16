@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+from django.core.mail import EmailMessage
 from pathlib import Path
 import os
 from django.contrib import messages
@@ -155,11 +155,10 @@ MESSAGE_TAGS={
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get('email_host')
-EMAIL_PORT = 25
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('email_host_user')
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD =os.environ.get('email_host_password')
 EMAIL_USE_TLS =True
-DEFAULT_FROM_EMAIL = 'unknown'
-
+DEFAULT_FROM_EMAIL = os.environ.get('email_host_user')
 #print(DATABASES['default'])

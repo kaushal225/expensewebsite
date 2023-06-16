@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render,redirect
 from django.views import View
 import json
@@ -77,12 +78,12 @@ class RegistrationView(View):
                 send_email=EmailMessage(
                     email_subject,
                     email_body,
-                    'noreply@semycolon.com',
+                    os.environ.get('email_host_user'),
                     [email],
 
                 )
                 print(user.is_active)
-                #send_email.send(fail_silently=False)
+                send_email.send(fail_silently=False)
                 messages.success(request,'account successfully created')
                 return redirect('login')
         return render(request,'authentication/register.html')
@@ -90,6 +91,9 @@ class RegistrationView(View):
 
 class verificationView(View):
     def get(self,request,uidb64,token):
+        context={'uidb64':uidb64,'token':token}
+        return render(request,'authentication/account_activation.html',context)
+    def post(self,request,uidb64,token):        
         try:
             id=force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=id)
@@ -99,14 +103,12 @@ class verificationView(View):
                 return redirect('login')
             if not user.is_active:
                 print('not active')
+                user.is_active=True
+                messages.success(request,'account activated successfully')
                 return redirect('login')
-            user.is_active=True
-            user.save()
-            messages.success(request,'account activated successfully')
-            return redirect('login')
         except Exception as ex:
-            pass
-        print('normal')
+            messages.error(request,'something went horribly wrong please try again')
+            return redirect('login')
         return redirect('login')
 
 
@@ -172,7 +174,7 @@ class RequestPasswordResetEmail(View):
             email_subject,
             email_body,
             'noreply@semycolon.com',
-            [email],
+            [email]
 
         )
         send_email.send(fail_silently=False)
@@ -223,7 +225,3 @@ class completePasswordReset(View):
             messages.error(request,'something went wrong')
             return render(request,'authentication/set-new-password.html',context)   
             
-
-
-
-
