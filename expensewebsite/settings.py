@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-from django.core.mail import EmailMessage
 from pathlib import Path
 import os
 from django.contrib import messages
@@ -88,11 +87,12 @@ TEMPLATES = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
+        'URL':os.environ.get('DATABSE_URL'),
         "NAME": os.environ.get('DB_NAME'),
         "USER": os.environ.get('DB_USER'),
         "PASSWORD": os.environ.get('DB_USER_PASSWORD'),
         "HOST": os.environ.get('DB_HOST'),
-        "PORT": "5432",
+        "PORT": os.environ.get('DB_PORT'),
     }
 }
 
@@ -142,8 +142,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #after editing
 
-#STATIC_URL = "static/"
-#STATICFILES_DIRS = [os.path.join(BASE_DIR, "expensewebsite/static")]
+STATIC_URL = "static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "expensewebsite/static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
