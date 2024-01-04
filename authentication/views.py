@@ -118,11 +118,15 @@ class LoginView(View):
     def post(self,request):
         username=request.POST['username']
         password=request.POST['password']
+        user_db=None
         if username and password:
-
-            
-            exist=User.objects.filter(username=username).exists()
-            user_db=User.objects.get(username=username)    
+            exist=False
+            try:
+                exist=User.objects.filter(username=username).exists()
+                user_db=User.objects.get(username=username)
+            except Exception as e:
+                pass
+               
             user=auth.authenticate(username=username,password=password) 
             print('user is',user)
             if user is None and not exist:
@@ -130,7 +134,7 @@ class LoginView(View):
                 return render(request,'authentication/login.html')
             try:    
                 if exist:
-                    if user_db.is_active:
+                    if user_db is not None and user_db.is_active:
                         print('here')
                         auth.login(request,user)
                         print('there')

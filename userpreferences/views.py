@@ -17,13 +17,14 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 import time
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import os
 import json
 from expensewebsite.settings import BASE_DIR
 from .models import UserPreferences
 from django.contrib import messages
 from expenses.models import Expense
+from django.contrib.auth.models import User
 # Create your views here.
 
 
@@ -86,3 +87,13 @@ def index(request):
 
 
 
+def delete_user_acount(request,user):
+    if(request.user.username!=user):
+        messages.warning(request,'you are trying to delete someone elses account')
+        return redirect('expenses')
+    if request.method=='GET':
+        return render(request,'partials/confirm_deletion.html',{'message':'do you really want to delete your account'})
+    else:
+        User.objects.get(username=user).delete()
+        messages.warning(request,'your account is deleted successfully')
+        return redirect('login')

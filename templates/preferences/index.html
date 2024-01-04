@@ -2,6 +2,7 @@
 
 {% block content %}
 <div class="container mt-3">
+   <a href="{% url 'delete_user' request.user.username %}" class="btn btn-danger">Delete Account</a>
     <h5>preferred currency</h5>
     {% include 'partials/_messages.html' %}
     <form action="{% url 'preferences' %}" method="post">
