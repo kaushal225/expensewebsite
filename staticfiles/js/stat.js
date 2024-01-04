@@ -1,4 +1,17 @@
 
+console.log(document)
+fetch('/expense_category_summary',{
+  method:'POST'
+}).then((data)=>data.json()).then((result)=>{
+       console.log(result);
+       console.log('hello')
+       const category_data=result.expense_category_data;
+       [label,data]=[Object.keys(category_data),Object.values(category_data)]
+       show_chart(label,data)
+   }
+
+   );
+    
     function show_chart(labels,data){//const ctx = document.getElementById('myChart');
     var ctx = document.querySelector('#myChart').getContext('2d'); // 2d context
     //ctx='mychart'
@@ -20,23 +33,13 @@
           }
         }
         ,
-        plugins:{
-        title:{
+        titles:{
             display:true,
             text:'Expenses per category'
         }
       }
-    }
     });
   
 }
-      fetch('/expense_category_summary').then(data=>data.json()).then((result)=>{
-        console.log(result);
-        const category_data=result.expense_category_data;
-        console.log(result)
-        [label,data]=[Object.keys(category_data),Object.values(category_data)]
-        show_chart(label,data)
-    }
 
-    );
 

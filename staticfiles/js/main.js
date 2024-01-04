@@ -48,13 +48,11 @@ join_group=document.getElementById('join_group');
 console.log(join_group);
 
 group_name.addEventListener('keyup',(e)=>{
-  console.log(999);
   join_group.innerHTML='';
   fetch('/groups/join_group',{
     method:'POST',
     body:JSON.stringify({searchText:e.target.value})
   }).then((data)=>data.json()).then((element)=>{
-       console.log(67)
        element.forEach(group => {
             join_group.innerHTML+=`<option name='group_name' value=${group} > ${group} </option>
             
