@@ -1,0 +1,15 @@
+{% extends 'partials/base.html' %}
+
+{% block content %}
+
+<script>
+    const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+ /*  if(entry.type==="back_forward"){
+    window.history.back()
+  } */
+  window.history.back()
+});
+</script>
+
+{% endblock %}

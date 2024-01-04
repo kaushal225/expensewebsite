@@ -32,8 +32,7 @@ searchField.addEventListener('keyup',(e)=>{
                     <td> ${element.amount} </td>
                     <td> ${element.category} </td>
                     <td> ${element.description} </td>
-                    <td> ${element.date} </td>
-                    
+                    <td> ${element.date}  </td>
                     </tr>
                     
                     `;

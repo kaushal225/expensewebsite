@@ -1,0 +1,23 @@
+{% extends 'partials/base.html' %}
+
+{% block content %}
+   <div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <form action="{% url 'join_request' %}" method="post">
+            <div class="form-group" id="group_name">
+                <div>
+                <input type="text" placeholder="search" class="form-control" name="group" list="join_group">
+                <datalist id="join_group">
+                    
+                </datalist>
+            </div>
+            </div>
+            <div>
+                <input type="submit" value="send request" class="btn btn-primary">
+            </div>
+        </form>
+        </div>
+    </div>
+   </div>
+{% endblock %}

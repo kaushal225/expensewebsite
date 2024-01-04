@@ -1,0 +1,52 @@
+{% extends 'partials/base.html'  %}
+
+{% block content %}
+<div class="container ml-4">
+    
+  
+  <div class="row mt-5">
+    <div class="list-table">
+        <table class="table table-stripped table-hover">
+            
+            <thead>
+                <tr>
+                    <td>Name</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for  Admin in page_obj %}
+                    <tr>
+                        <td>{{Admin.name}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination_container">
+
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; 1</a></li>
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a href="?page={{page_obj.previous_page_number}}" class="page-link">previous</a></li>
+            {% endif %}
+            <div class="align-right"  style="color:red; padding: 1% 2% 0 2%;">
+                showing page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+            </div>
+            {% if page_obj.has_next %}
+            <li class="page-item" style="padding-left: 20%;float: right;"><a href="?page={{page_obj.next_page_number}}" class="page-link">next</a></li>
+            {% endif %}
+            <li class="page-item"><a class="page-link" href="?page={{page_obj.paginator.num_pages}}">{{page_obj.paginator.num_pages}} &raquo;</a></li>
+        </ul>
+    </div>
+
+</div>
+ 
+<script>
+    const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+  if(entry.type==="back_forward"){
+    location.reload()
+  }
+});
+</script>
+{% endblock %}

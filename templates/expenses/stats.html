@@ -8,7 +8,7 @@
 <div class="col-md-9">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="">Summary</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'expenses' %}">Expenses</a></li>
           <li class="breadcrumb-item active" aria-current="page">Expenses Summary</li>
         </ol>
       </nav>
@@ -29,5 +29,4 @@
   
 <script src="{% static 'js/stat.js' %}"></script>
 </div>
-
 {% endblock content %}

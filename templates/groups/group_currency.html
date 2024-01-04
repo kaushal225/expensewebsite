@@ -1,0 +1,33 @@
+{% extends 'partials/base.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-title">
+                        choose your prefered currency
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'group_currency_modify' group %}" method="post">
+                            {% csrf_token %}
+                            <select name="currency_list" id="">
+                                <option selected name="currency_list" value="{{current_currency}}">{{current_currency}}</option>
+                                {% for currency in currencies_list  %}
+
+                                    <option name="currency_list" value="{{currency.value}}">{{currency.name}}--{{currency.value}}</option>
+
+                                {% endfor %}
+                            </select>
+                            <input type="submit" value="Find">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

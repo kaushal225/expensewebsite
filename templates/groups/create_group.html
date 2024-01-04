@@ -1,0 +1,39 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-title">
+                        <p style="color:goldenrod;padding:10 0 0 30;">you will be the admin of the group</p>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'create_group' %}" method="post" autocomplete="off" >
+                            {% csrf_token %}
+                             {% for field in form %}
+                             <div class="form-group">
+                                <label for="">{{field.label_tag}}</label>
+                                <p class="form-control-sm">{{field}}</p>
+                            </div>
+                             {% endfor %}
+                            <input type="submit" value="submit" class="btn btn-primary">   
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        const entries=performance.getEntriesByType("navigation");
+    entries.forEach((entry)=>{
+      if(entry.type==="back_forward"){
+        location.reload();
+      }
+    });
+  </script>
+
+{% endblock %}

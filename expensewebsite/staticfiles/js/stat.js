@@ -28,7 +28,11 @@
     });
   
 }
-      fetch('/expense_category_summary').then(data=>data.json()).then((result)=>{
+      fetch('/expense_category_summary',
+      {
+        method:'POST'
+      }
+      ).then(data=>data.json()).then((result)=>{
         console.log(result);
         const category_data=result.expense_category_data;
         [label,data]=[Object.keys(category_data),Object.values(category_data)]

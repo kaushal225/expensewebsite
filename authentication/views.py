@@ -63,8 +63,9 @@ class RegistrationView(View):
 
                 user=User.objects.create_user(username=username,email=email)
                 user.set_password(password)
+                user.is_active=False
                 user.save()
-                #user.is_active=False
+                
 
                 uidb64=urlsafe_base64_encode(force_bytes(user.pk))
 
@@ -98,12 +99,11 @@ class verificationView(View):
             id=force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=id)
             if not token_generator.check_token(user,token):
-                #print(user.is_active)
                 messages.error(request,'user already activated')
                 return redirect('login')
             if not user.is_active:
-                print('not active')
                 user.is_active=True
+                user.save()
                 messages.success(request,'account activated successfully')
                 return redirect('login')
         except Exception as ex:
@@ -118,22 +118,33 @@ class LoginView(View):
     def post(self,request):
         username=request.POST['username']
         password=request.POST['password']
-        print(password+username)
         if username and password:
 
-            user=auth.authenticate(username=username,password=password)
-            print(user)
-            if user is not None:
-                if user.is_active:
-                    auth.login(request,user)
-                    messages.success(request,'welcome '+ user.username + 'you are logged in')
-                    return redirect('expenses')
-                messages.error(request,'your account is not activated please check your email')
-                return render(request,'authenticate/login.html')
-            messages.error(request,'invalid credintials try again')
-            return render(request,'authentication/login.html')
-        messages.error(request,'please fill both the fields')
-        return render(request,'authentication/login.html')
+            
+            exist=User.objects.filter(username=username).exists()
+            user_db=User.objects.get(username=username)    
+            user=auth.authenticate(username=username,password=password) 
+            print('user is',user)
+            if user is None:
+                messages.error(request,'invalid credintials try again')
+                return render(request,'authentication/login.html')
+            try:    
+                if exist:
+                    if user_db.is_active:
+                        print('here')
+                        auth.login(request,user)
+                        print('there')
+                        messages.success(request,'welcome '+ username + ' you are logged in')
+                        return redirect('expenses')
+                    messages.error(request,'your account is not activated please check your email')
+                    return render(request,'authentication/login.html')
+                messages.error(request,'invalid credintials try again')
+                return render(request,'authentication/login.html')
+                 
+            except Exception as e:
+                print(e)
+                messages.error(request,'please fill both the fields')
+                return render(request,'authentication/login.html')
 
 
 class logoutView(View):
@@ -156,11 +167,11 @@ class RequestPasswordResetEmail(View):
             return render(request,'authentication/reset-password.html',context)
         
         user = User.objects.filter(email=email)
-        print(len(user))
+        """     print(len(user)) """
         if len(user) < 1:
             messages.success(request,'we have a sent you a password reset link on your registered email')
             return redirect('login')
-        print(user[0].username)
+        """ print(user[0].username) """
         uidb64=urlsafe_base64_encode(force_bytes(user[0].pk))
 
         domain=get_current_site(request).domain
@@ -195,7 +206,7 @@ class completePasswordReset(View):
                 messages.error(request,'password link is invalid please generate a new one')
                 return render(request,'authentication/reset-password.html')  
         except Exception as id:
-            print(id)
+            """ print(id) """
             messages.error(request,'something went wrong'+id)
             return render(request,'authentication/set-new-password.html',context)   
             
@@ -224,4 +235,6 @@ class completePasswordReset(View):
         except Exception as id:
             messages.error(request,'something went wrong')
             return render(request,'authentication/set-new-password.html',context)   
+        
+
             

@@ -1,0 +1,41 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-9">
+            </div>
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-title">
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'add_group_individual_expense' group pk %}" method="post" autocomplete="off">
+                            {% csrf_token %}
+                            <div class="form-group ml-3">
+                                <label for=""> Amount </label>
+                                <input type="number" name="expense_amount" id="" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="form-group">
+                                <label for=""> Date </label>
+                                <input type="date" name="expense_date" id="" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="form-group">
+                                <label for=""> Description </label>
+                                <input type="text" name="description" id="" class="form-control form-control-bg" required>
+                            </div>
+                            <input type="submit" value="submit" class="btn btn-primary">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const entries=performance.getEntriesByType("navigation");
+    entries.forEach((entry)=>{
+      if(entry.type==="back_forward"){
+        window.history.back()
+      }
+    });
+  </script>
+{% endblock %}

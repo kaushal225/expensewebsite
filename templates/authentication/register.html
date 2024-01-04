@@ -13,7 +13,7 @@
             
                 {% include 'partials/_messages.html' %}
              
-                <form action="{% url 'register' %}" method="post">
+                <form action="{% url 'register' %}" method="post" autocomplete="off">
                        {% csrf_token %}
                     <div class="form-group form-custom">
                         <input type="text" 

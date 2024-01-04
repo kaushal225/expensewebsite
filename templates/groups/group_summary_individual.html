@@ -1,0 +1,62 @@
+{% include 'partials/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div class="container mt-5">
+    <div class="row">
+
+        {% include 'partials/_messages.html' %}
+
+        <div class="col-md-9">
+            <nav aria-label="breadcrumb">
+               <ol class="breadcrumb">
+                 <li class="breadcrumb-item"><a href="{% url 'list_groups' %}">groups</a></li>
+                 <li class="breadcrumb-item active">{{request.user}}'s summary of groups expenses</li>   
+               </ol> 
+            </nav>
+        </div>
+
+        <div style="height: 300px; width: 100vw; position: relative; display: flex; justify-content: center;margin-right: 10%;">
+            <canvas id="myChart" height="100px" width="100px"></canvas>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function individual_summary(labels,data){
+        var context=document.querySelector('#myChart').getContext('2d');
+        new Chart(context,{
+            type:'pie',
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:labels,
+                    data:data
+                }]
+
+            }
+            ,
+            plugins:{
+                title:{
+                    display:true,
+                    text:'expense per group'
+                }
+            }
+        })
+    }
+
+fetch('/groups/group_stat_individual',{
+    method:'POST'
+}).then(data=>data.json()).then(result=>{
+    dataset=result.dataset;
+    var labels,data;
+    [labels,data]=[Object.keys(dataset),Object.values(dataset)]
+    individual_summary(labels,data)
+})
+
+</script>
+
+{% endblock %}

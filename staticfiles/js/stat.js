@@ -20,17 +20,20 @@
           }
         }
         ,
-        titles:{
+        plugins:{
+        title:{
             display:true,
             text:'Expenses per category'
         }
       }
+    }
     });
   
 }
       fetch('/expense_category_summary').then(data=>data.json()).then((result)=>{
         console.log(result);
         const category_data=result.expense_category_data;
+        console.log(result)
         [label,data]=[Object.keys(category_data),Object.values(category_data)]
         show_chart(label,data)
     }

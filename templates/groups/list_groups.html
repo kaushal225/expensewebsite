@@ -1,0 +1,79 @@
+{% extends 'partials/base.html'  %}
+
+{% block content %}
+<div class="container ml-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="text" placeholder="search" id="searchField" class="form-control">
+            </div>
+            
+        </div>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="list-table">
+        <table class="table table-stripped table-hover">
+            
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>is Admin</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for  group in page_obj %}
+                    <tr>
+                        <td>{{group.group_name}}</td>
+                        {% if group.group_admin == True %}
+                        <td>Yes</td>
+                        {% else %}
+                        <td>No</td>
+                        {% endif %}
+                        <td><a href="{% url 'exit_group' group.group_name request.user%}">Leave {{group.group_name}}</a></td>
+                        <td style="display: flex; justify-content:space-evenly; "><a href="{% url 'group_details' group.group_name %}" ><i class="fa fa-eye"></i></a>
+                            {% if group.group_admin == True %}
+                            <a href="{% url 'edit_group' group.group_name %}"><i class="fa fa-pencil"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination_container">
+
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; 1</a></li>
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a href="?page={{page_obj.previous_page_number}}" class="page-link">previous</a></li>
+            {% endif %}
+            <div class="align-right"  style="color:red; padding: 1% 2% 0 2%;">
+                showing page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+            </div>
+            {% if page_obj.has_next %}
+            <li class="page-item" style="padding-left: 20%;float: right;"><a href="?page={{page_obj.next_page_number}}" class="page-link">next</a></li>
+            {% endif %}
+            <li class="page-item"><a class="page-link" href="?page={{page_obj.paginator.num_pages}}">{{page_obj.paginator.num_pages}} &raquo;</a></li>
+        </ul>
+    </div>
+
+
+    <div id="search-table" class="hide-content">
+        <table class=" table table-hover table-stripped">
+            <thead>
+                <td>Name</td>
+                <td>Created by</td>
+                <td></td>
+            </thead>
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+ 
+
+{% endblock %}

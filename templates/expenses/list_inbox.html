@@ -1,0 +1,14 @@
+{% include 'partials/base.html' %}
+
+
+{% block content %}
+ 
+<ul>
+    <div style="  display:flex; flex-direction: column-reverse; align-items: center; justify-content: space-evenly;" >
+        {% for message in messages %}
+                <li style="margin-bottom: 10px ;"> {{messages.count}} you have a request to join group - <a href="{% url 'group_details' message.group_id %}"> {{message.group_id}} </a> --- <a href="{% url 'accept_request_user' message.group_id %}" class="btn btn-sm btn-primary" >Accept</a> <a href="{%  url 'deny_request_user' message.group_id %}" class="btn btn-sm btn-danger"  >deny</a></li>
+        {% endfor %}   
+    </div>
+</ul>
+
+{% endblock %}

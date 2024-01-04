@@ -29,7 +29,7 @@ def index(request):
     }
     return render(request,'income/index.html',context)
 
-
+@login_required(login_url='authentication/login')
 def add_income(request):
     sources=Source.objects.all()
     incomes=Income.objects.filter(owner=request.user)
@@ -54,10 +54,12 @@ def add_income(request):
         return redirect('incomes')
     return render(request,'income/add_income.html',context)
 
-
+@login_required(login_url='authentication/login')
 def edit_income(request,id):
-    print(id)
     income = Income.objects.get(pk=id)
+    if(income.owner!=request.user):
+        messages.warning('unauthorzed request')
+        return redirect('expenses')
     income.date=income.date.strftime("%Y-%m-%d")
     sources=Source.objects.all()
     print(income.date)
@@ -86,7 +88,7 @@ def edit_income(request,id):
         return redirect('income')
     return render(request,'income/edit-income.html',context)
 
-
+@login_required(login_url='authentication/login')
 def search_incomes(request):
     if request.method=='POST':
         search_str=json.loads(request.body).get('searchText')
@@ -99,32 +101,44 @@ def search_incomes(request):
 
         return JsonResponse(list(incomes.values()),safe=False)
     
+@login_required(login_url='authentication/login')    
 def delete_income(request,id):
     income=Income.objects.get(pk=id)
-    income.delete()
-    messages.success(request,'successfully removed incomes from your list')
-    return redirect('incomes')
+    if(request.user!=income.owner):
+        messages.warning('unauthorzed request')
+        return redirect('expenses')
+    if request.method=='GET':
+        context={'message':'do you really want to delete this income'}
+        return render(request,'partials/confirm_deletion.html',context)
+    else:
+        income.delete()
+        messages.success(request,'successfully removed incomes from your list')
+        return redirect('incomes')
 
+@login_required(login_url='authentication/login')
 def income_category_summary(request):
     print('hello you are delusional but this is working just fine')
-    todays_date = datetime.now()
-    six_months_ago = todays_date-timedelta(days=180)
-    incomes=Income.objects.filter(owner=request.user,date__gte=six_months_ago,date__lte=todays_date)
-    finalrep={}
-    print(incomes)
-    def get_source(income_obj):
-        return income_obj.source
-    source_list=list(set(map(get_source,incomes)))
+    if  request.method=='POST':
+        todays_date = datetime.now()
+        six_months_ago = todays_date-timedelta(days=180)
+        incomes=Income.objects.filter(owner=request.user,date__gte=six_months_ago,date__lte=todays_date)
+        finalrep={}
+        print(incomes)
+        def get_source(income_obj):
+            return income_obj.source
+        source_list=list(set(map(get_source,incomes)))
 
-    for source in source_list:
-        finalrep[source]=0
-    for income in incomes:
-        finalrep[income.source]+=income.amount
-    #for (key,val) in finalrep:
-        #print((key,val)
-    print('hello')
-    return JsonResponse({'income_category_data':finalrep},safe='false')
+        for source in source_list:
+            finalrep[source]=0
+        for income in incomes:
+            finalrep[income.source]+=income.amount
+        #for (key,val) in finalrep:
+            #print((key,val)
+        print('hello')
+        return JsonResponse({'income_category_data':finalrep},safe='false')
+    return render(request,'income/stats.html')
 
 
+@login_required(login_url='authentication/login')
 def stats_view(request):
     return render(request,'income/stats.html')

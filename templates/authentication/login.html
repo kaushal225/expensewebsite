@@ -13,7 +13,7 @@
             
                 {% include 'partials/_messages.html' %}
              
-                <form action="{% url 'login' %}" method="POST">
+                <form action="{% url 'login' %}" method="POST" autocomplete="off">
                        {% csrf_token %}
                     <div class="form-group form-custom">
                         <input type="text" 

@@ -1,0 +1,62 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+    {% include 'partials/_messages.html' %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-9">
+            </div>
+            <div class="col-md-5">
+                <a href="{% url 'add_group_individual_expense' group pk %}" {% if request.user.pk != pk %} class=" btn btn-secondary disabled" {% else %} class="btn btn-primary" {% endif %}> Add New Expense</a>
+            </div>
+        </div>
+        {% if expenses.count %}
+        <div class="row">
+            <table class="table table-stripped table-hover">
+                <thead>
+                    <th>name</th>
+                    <th>expense</th>
+                    <th>date</th>
+                    <th>description</th>
+                    <th>Edit</th>
+                </thead>
+                <tbody>
+                    {% for expense in page_obj %}
+                        <tr>
+                            <td>{{expense.individual_name}}</td>
+                            <td>{{expense.expense_amount}}</td>
+                            <td>{{expense.expense_date}}</td>
+                            <td>{{expense.description}}</td>
+                            <td><a href="{% url 'edit_group_expense' expense.id %}" ><i class="fa fa-pencil"></i></a></td>
+                        </tr>
+                        
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination_container">
+
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; 1</a></li>
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a href="?page={{page_obj.previous_page_number}}" class="page-link">previous</a></li>
+                    {% endif %}
+                    <div class="align-right"  style="color:red; padding: 1% 2% 0 2%;">
+                        showing page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+                    </div>
+                    {% if page_obj.has_next %}
+                    <li class="page-item" style="padding-left: 20%;float: right;"><a href="?page={{page_obj.next_page_number}}" class="page-link">next</a></li>
+                    {% endif %}
+                    <li class="page-item"><a class="page-link" href="?page={{page_obj.paginator.num_pages}}">{{page_obj.paginator.num_pages}} &raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        const entries=performance.getEntriesByType("navigation");
+    entries.forEach((entry)=>{
+      if(entry.type==="back_forward"){
+        location.reload()
+      }
+    });
+    </script>
+{% endblock %}

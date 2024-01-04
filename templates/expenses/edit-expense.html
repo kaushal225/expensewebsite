@@ -19,7 +19,7 @@
   <div class="card">
     <div class="card-body">
         {% include 'partials/_messages.html' %}
-        <form action="{% url 'edit-expense' expense.id %}" method="post">
+        <form action="{% url 'edit-expense' expense.id %}" method="post" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">
                 <label for="">Amount</label>
@@ -47,4 +47,13 @@
     </div>
   </div>
 </div>
+<script>
+    const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+  if(entry.type==="back_forward"){
+    location.reload()
+    window.history.back()
+  }
+});
+</script>
 {% endblock %}

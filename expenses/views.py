@@ -8,6 +8,24 @@ from django.core.paginator import Paginator
 import json
 from django.http import JsonResponse
 from userpreferences import models
+from groups import models as group_models
+
+def get_messages(user):
+    inbox_messages=list(group_models.Inbox.objects.filter(user=user,sent=False).values())
+    
+    print(inbox_messages)
+    return inbox_messages
+
+
+def list_inbox_messages(request):
+    inbox_messages=get_messages(request.user)
+    print(inbox_messages)
+    context={'messages':inbox_messages}
+    #context['messages']=inbox_messages
+    print(context['messages'])
+    return render(request,'expenses/list_inbox.html',context)     
+
+
 
 def search_expenses(request):
     if request.method=='POST':
@@ -24,6 +42,8 @@ def search_expenses(request):
 
 @login_required(login_url='authentication/login')
 def index(request):
+    recieved_messages=get_messages(request.user)
+    print(recieved_messages)
     expenses=Expense.objects.filter(owner=request.user)
     paginator = Paginator(expenses,5)
     page_number=request.GET.get('page')
@@ -64,12 +84,16 @@ def add_expense(request):
         expense.save()
         messages.success(request,'your expense is successfully added to expense list')
         return redirect('expenses')
+    print(categories)
     return render(request,'expenses/add_expense.html',context)
 
 
 
 def edit_expense(request,id):
     expense = Expense.objects.get(pk=id)
+    if(expense.owner!=request.user):
+        messages.warning(request,'not your expenses')
+        return redirect('expenses')
     expense.date=expense.date.strftime("%Y-%m-%d")
     categories=Category.objects.all()
     print(expense.date)
@@ -101,27 +125,37 @@ def edit_expense(request,id):
 
 def delete_expense(request,id):
     expense=Expense.objects.get(pk=id)
-    expense.delete()
-    messages.success(request,'successfully removed expenses from your list')
-    return redirect('expenses')
+    if(expense.owner!=request.user):
+        messages.warning(request,'not your expenses')
+        return redirect('expenses')
+    if request.method=='GET':
+
+        return render(request,'partials/confirm_deletion.html',{'message':'do you really want to delete this expense'})
+    else:
+        expense=Expense.objects.get(pk=id)
+        expense.delete()
+        messages.success(request,'successfully removed expenses from your list')
+        return redirect('expenses')
 
 
 def expense_category_summary(request):
-    todays_date = datetime.now()
-    six_months_ago = todays_date-timedelta(days=180)
-    expenses=Expense.objects.filter(owner=request.user,date__gte=six_months_ago,date__lte=todays_date)
-    finalrep={}
-    print(expenses)
-    def get_category(expense):
-        return expense.category
-    category_list=list(set(map(get_category,expenses)))
-    for c in category_list:
-        print(c)
-    for category in category_list:
-        finalrep[category]=0
-    for expense in expenses:
-        finalrep[expense.category]+=expense.amount
-    return JsonResponse({'expense_category_data':finalrep},safe=False)
+    if request.method=='POST':
+        todays_date = datetime.now()
+        six_months_ago = todays_date-timedelta(days=180)
+        expenses=Expense.objects.filter(owner=request.user,date__gte=six_months_ago,date__lte=todays_date)
+        finalrep={}
+        print(expenses)
+        def get_category(expense):
+            return expense.category
+        category_list=list(set(map(get_category,expenses)))
+        for c in category_list:
+            print(c)
+        for category in category_list:
+            finalrep[category]=0
+        for expense in expenses:
+            finalrep[expense.category]+=expense.amount
+        return JsonResponse({'expense_category_data':finalrep},safe=False)
+    return render(request,'expenses/stats.html')
 
 
 def stats_view(request):

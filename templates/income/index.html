@@ -102,4 +102,12 @@
 </div>
 
 <script src="{% static 'js/search_income.js' %}"></script>
+<script>
+    const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+  if(entry.type==="back_forward"){
+    location.reload()
+  }
+});
+</script>
 {% endblock content %}

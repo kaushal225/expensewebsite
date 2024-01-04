@@ -15,11 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf.urls import handler404,handler500
+from groups import views
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('expenses.urls')),
     path('authentication/',include('authentication.urls')),
     path('income/',include('income.urls')),
-    path('preferences/',include('userpreferences.urls'))
+    path('preferences/',include('userpreferences.urls')),
+    path('groups/',include('groups.urls'))
 ]
+
+handler404  = views.custom_404
+handler500 = views.custom_500

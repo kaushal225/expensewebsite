@@ -30,7 +30,9 @@ function show_chart(labels,data){//const ctx = document.getElementById('myChart'
   
 }
 
-fetch('/income/income-category-summary').then(data=>data.json()).then((result)=>{
+fetch('/income/income-category-summary',{
+  method:'POST'
+}).then(data=>data.json()).then((result)=>{
         console.log(result);
         const category_data=result.income_category_data;
         [label,data]=[Object.keys(category_data),Object.values(category_data)]

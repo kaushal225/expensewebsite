@@ -78,9 +78,9 @@
 
 
     <div class="pagination-container">
-    <div class="align-right"  style="color:red;">
-        showing page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
-    </div>
+        <div class="align-right"  style="color:red;">
+            showing page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+        </div>
     <div>
     <ul class="pagination" style="float:right;">
         {% if page_obj.has_previous %}
@@ -102,4 +102,12 @@
 </div>
 
 <script src="{% static 'js/search_expenses.js' %}"></script>
+<script>
+    const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+  if(entry.type==="back_forward"){
+    location.load()
+  }
+});
+</script>
 {% endblock content %}

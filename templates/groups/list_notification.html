@@ -1,0 +1,41 @@
+{% extends 'partials/base.html' %}
+
+{% block content %}
+
+<div>
+    {% if count %}
+        {% for notification in notifications %}
+        {% if notification.request_denied %}
+            <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}} has denied the request to join {{notification.group}} on {{notification.date}}  </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+        {% elif notification.request_accepted %}
+            <script>console.log('reqeust accepted')</script>
+            <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}} has accepted the request to join {{notification.group}}  on {{notification.date}} </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+        {% elif notification.admin_status_change %}
+        <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}}'s  admin status has been changed in the {{notification.group}} by {{notification.admin_involved}} on {{notification.date}}  </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>        
+        {% elif notification.admin_involved and notification.user_involved %}
+            {% if notification.user_involved == request.user.username %}
+                <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p">you have been removed from {{notification.group}} by {{notification.admin_involved}}   </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+            {% else %}
+                <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"> <p>{{notification.user_involved}} has been removed from {{notification.group}} by {{notification.admin_involved}} on {{notification.date}} </p>  <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+            {% endif %} 
+        {% elif notification.user_involved %}
+            <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p>{{notification.user_involved}} has left the group on {{notification.date}}  </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x" ></i> </a></div>
+        {% else %}
+           <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;">  <p  >The {{notification.group}} is deleted by {{notification.admin_involved}} on {{notification.date}}  </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary"><i class="fa-solid fa-x"></i></a></div>
+        {% endif %}
+        {% endfor %}
+    {% else %}
+        <p class="alert alert-primary">no new notifications yet</p>
+    {% endif %}
+</div>
+<script>
+    const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+  if(entry.type==="back_forward"){
+    window.history.back()
+  }
+});
+</script>
+
+
+{% endblock %}

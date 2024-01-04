@@ -1,0 +1,74 @@
+{% include 'partials/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div class="container mt-5">
+    <div class="row">
+
+        {% include 'partials/_messages.html' %}
+
+        <div class="col-md-9">
+            <nav aria-label="breadcrumb">
+               <ol class="breadcrumb">
+                 <li class="breadcrumb-item"><a href="{% url 'list_groups' %}">groups</a></li>
+                 <li class="breadcrumb-item active">{{group}}'s summary'</li>   
+               </ol> 
+            </nav>
+        </div>
+
+        <div style="height: 300px; width: 100vw; position: relative; display: flex; justify-content: center;margin-right: 10%;">
+            <canvas id="myChart" height="100px" width="100px"></canvas>
+        </div>
+            
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+    
+
+    fetch('/groups/group_stat_admin/{{group}}',{
+        method:'POST'
+    }).then(data=>data.json()).then((result)=>{
+        const group_expense_data=result.group_summary
+        console.log(group_expense_data)
+        var label,data;
+        [label,data]=[Object.keys(group_expense_data),Object.values(group_expense_data)];
+        summary_admin(label,data);
+        
+    });
+
+    function summary_admin(labels,data){
+    var context=document.querySelector('#myChart').getContext('2d');
+    new Chart(context,{
+        type:'pie',
+        data:{
+            labels:labels,
+            datasets:[{
+                label:labels,
+                data:data,
+            }]
+        },
+        options:{
+            legend:{display:false},
+            plugins:{
+                title:{
+                display:true,
+                text: 'expenses per member(past 60 days)'
+            }
+        }
+        }
+
+    });
+}
+
+
+
+</script>
+
+{% endblock %}
