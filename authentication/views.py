@@ -125,7 +125,7 @@ class LoginView(View):
             user_db=User.objects.get(username=username)    
             user=auth.authenticate(username=username,password=password) 
             print('user is',user)
-            if user is None:
+            if user is None and not exist:
                 messages.error(request,'invalid credintials try again')
                 return render(request,'authentication/login.html')
             try:    
