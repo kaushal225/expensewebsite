@@ -21,6 +21,7 @@
                     <td>is Admin</td>
                     <td></td>
                     <td></td>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
@@ -36,6 +37,8 @@
                         <td style="display: flex; justify-content:space-evenly; "><a href="{% url 'group_details' group.group_name %}" ><i class="fa fa-eye"></i></a>
                             {% if group.group_admin == True %}
                             <a href="{% url 'edit_group' group.group_name %}"><i class="fa fa-pencil"></i></a>
+                            {% else %}
+                            <i class="fa fa-pencil disabled"></i>
                             {% endif %}
                         </td>
                     </tr>

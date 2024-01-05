@@ -30,5 +30,12 @@
   <a href="{% url 'group_currency_list' group %}" class="btn btn-secondary">Change currency</a>
   <a href="{% url 'group_summary_admin' group %}" class="btn btn-secondary">summary</a>
 
- 
+<script>
+    const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+  if(entry.type==="back_forward"){
+    location.reload()
+  }
+});
+</script>
 {% endblock %}

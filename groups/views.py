@@ -560,7 +560,7 @@ def exit_group(request,group,user):
             models.Group_summary.objects.get(group_name=group,member_name=user).delete()
             create_notification(group.group_name,user.username)
 
-    return redirect('group_details',group)
+    return redirect('expenses')
 
 
 
