@@ -1,6 +1,16 @@
 {% extends 'partials/base.html' %}
 {% block content %}
  
+<div class="container ml-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="text" placeholder="search" id="searchField" class="form-control" autocomplete="off">
+            </div>
+            
+        </div>
+    </div>
+</div>
 <div class="list-table">
     <table class="table table-stripped table-hover">
         
@@ -13,7 +23,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for  member in members %}
+            {% for  member in page_obj %}
                 <tr>
                     <td>{{member.member}}</td>
                     <td>{{member.admin}}</td>
@@ -23,19 +33,109 @@
             {% endfor %}
         </tbody>
     </table>
-  </div>
-  <a href="{% url 'add_member' group %}" class="btn btn-primary">Add member</a>
-  <a href="" class="btn btn-danger">Delete group</a>
-  <a href="{% url 'list_requests' group %}"  class="btn btn-secondary">Join requests</a>
-  <a href="{% url 'group_currency_list' group %}" class="btn btn-secondary">Change currency</a>
-  <a href="{% url 'group_summary_admin' group %}" class="btn btn-secondary">summary</a>
+    <a href="{% url 'add_member' group %}" class="btn btn-primary">Add member</a>
+    <a href="" class="btn btn-danger">Delete group</a>
+    <a href="{% url 'list_requests' group %}"  class="btn btn-secondary">Join requests</a>
+    <a href="{% url 'group_currency_list' group %}" class="btn btn-secondary">Change currency</a>
+    <a href="{% url 'group_summary_admin' group %}" class="btn btn-secondary">summary</a>
 
-<script>
+    <div class="pagination_container">
+
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; 1</a></li>
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a href="?page={{page_obj.previous_page_number}}" class="page-link">previous</a></li>
+            {% endif %}
+            <div class="align-right"  style="color:red; padding: 1% 2% 0 2%;">
+                showing page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+            </div>
+            {% if page_obj.has_next %}
+            <li class="page-item" style="padding-left: 20%;float: right;"><a href="?page={{page_obj.next_page_number}}" class="page-link">next</a></li>
+            {% endif %}
+            <li class="page-item"><a class="page-link" href="?page={{page_obj.paginator.num_pages}}">{{page_obj.paginator.num_pages}} &raquo;</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="search-table">
+    <table class="table table-stripped table-hover">
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>Is Admin</td>
+                <td>Change Admin</td>
+                <td>Remove member</td>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+
+</div>
+
+<script defer>
     const entries=performance.getEntriesByType("navigation");
 entries.forEach((entry)=>{
   if(entry.type==="back_forward"){
     location.reload()
   }
 });
+
+const paginationcontainer=document.querySelector('.pagination_container');
+const display_table=document.querySelector('.search-table');
+const hide_table=document.querySelector('.list-table');
+const tbody=document.querySelector('#tbody');
+
+const searchbutton=document.querySelector('#searchField');
+
+display_table.style.display='none';
+
+console.log(tbody)
+
+searchbutton.addEventListener('keyup',(e)=>{
+    SearchText=e.target.value;
+    if(SearchText.length>0){
+        tbody.innerHTML=''
+        paginationcontainer.style.display='none';
+
+        fetch('/groups/search_members/{{group}}',{
+            method:'POST',
+            body:JSON.stringify({'searchText':SearchText})
+        }).then((data)=>data.json()).then((elements)=>{
+            hide_table.style.display='none';
+            display_table.style.display='block';
+
+            if(elements.length===0){
+                tbody.innerHTML='no element found'
+            }
+            
+
+            else{
+            elements.forEach(element=>{
+                tbody.innerHTML+=`
+                <tr>
+                    <td> ${element.member} </td>
+                    <td> ${element.is_admin} </td>
+                    <td> <a class="btn btn-sm btn-secondary" href="/groups/change_admin_status/${element.member}/${element.group}"> Change Admin status</a> </td>
+                    <td> <a class="btn btn-sm btn-danger" href="/groups/remove_user/${element.member}/${element.group}"> Remove ${element.member}</a> </td>
+                    </tr>
+                    
+
+                `
+            })
+        } 
+
+        })
+
+
+    }
+    else{
+        paginationcontainer.style.display='block'; 
+        hide_table.style.display='block';
+        display_table.style.display='none';
+    }
+});
+
 </script>
 {% endblock %}

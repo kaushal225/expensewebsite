@@ -1,10 +1,11 @@
+
+
 custom_toggle_button=document.getElementById('custom-toggle-button');
 /* console.log(custom_toggle_button); */
 custom_toggle_navbar=document.getElementById('custom-navbar-toggle');
 custom_toggle_content=document.getElementById('custom-content-toggle');
 notification_bell_icon=document.getElementById('notification-bell-icon');
 body=document.getElementsByTagName('body')
-console.log(notification_bell_icon)
 /* console.log(custom_toggle_navbar);
 console.log(custom_toggle_content); */
 
@@ -79,3 +80,4 @@ group_name.addEventListener('keyup',(e)=>{
 }
 
 //body.addEventListener("load",change_bell_icon_color(e.target));
+

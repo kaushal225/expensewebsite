@@ -213,8 +213,13 @@ def edit_group(request,group):
         else:
             temp_dict['admin']=True
         member.append(temp_dict)
+        paginator=Paginator(member,4)
+        page_number=request.GET.get('page')
+        page_obj=paginator.get_page(page_number)
+        context={}
+        context['page_obj']=page_obj
     #print(member)
-    return render(request,'groups/edit_group.html',{'members':member,'group':group})
+    return render(request,'groups/edit_group.html',{'page_obj':page_obj,'group':group})
 
 
 
@@ -374,7 +379,7 @@ def change_admin_status(request,user,group):
             models.Admins.objects.create(user=user,group=group)
         
         create_notification(group=group_name,user=user.username,admin_involved=request.user.username,admin_status_change=True)
-        return redirect('group_details',group)
+        return redirect('list_groups')
     else:
         messages.warning(request,'you are not authorized for this operation')
         return redirect('expenses')
@@ -698,3 +703,46 @@ def custom_404(request,exception):
 @login_required(login_url='/authentication/login')
 def custom_500(request):
     return render(request,'partials/404.html')
+
+
+#search groups
+@login_required(login_url='/authentication/login')
+def search_groups(request):
+    if request.method=='POST':
+        search_str=json.loads(request.body).get('searchText')
+        group_list=models.Custom_groups.objects.filter(group_name__icontains=search_str)
+        groups=[]
+        for group in group_list:
+            if models.Members.objects.filter(group=group,member=request.user).exists():
+                groups.append({'group_name':group.group_name,'is_admin':False,'user':request.user.username})
+            if is_admin(user=request.user,group=group):
+                groups[-1]['is_admin']=True
+        #groups=models.Members.objects.filter(group.group_name__icontains=search_str,member=request.user)
+        return JsonResponse(groups,safe=False)
+    
+@login_required(login_url='/authentication/login')    
+def search_members(request,group):
+    if(request.method=='POST'):
+        group=models.Custom_groups.objects.get(group_name=group)
+        search_str=json.loads(request.body).get('searchText')
+        users=User.objects.filter(username__contains=search_str)
+        members=[]
+        for user in users:
+            if models.Members.objects.filter(member=user,group=group).exists():
+                members.append( {'member':user.username,'is_admin':False,'group':group.group_name})
+            if is_admin(user,group=group):
+                members[-1]['is_admin']=True
+    return JsonResponse(members,safe=False)
+
+@login_required(login_url='/authentication/login') 
+def search_group_individual_expenses(request,group,pk):
+    if(request.method=='POST'):
+        search_str=json.loads(request.body).get('SearchText')
+        expenses=models.Group_individual_expenses.objects.filter(
+            group=group,individual_name=pk,expense_date__icontains=search_str)|models.Group_individual_expenses.objects.filter(
+                group=group,individual_name=pk,expense_amount__istartswith=search_str)|models.Group_individual_expenses.objects.filter(
+                        group=group,individual_name=pk,description__icontains=search_str)
+        expenses=list(expenses.values())
+        expenses.append({'request_user':request.user.pk})
+        return JsonResponse(expenses,safe=False)
+

@@ -64,13 +64,16 @@
     </div>
 
 
-    <div id="search-table" class="hide-content">
+    <div id="search-table">
         <table class=" table table-hover table-stripped">
             <thead>
                 <td>Name</td>
-                <td>Created by</td>
+                <td>is Admin</td>
+                <td></td>
+                <td></td>
                 <td></td>
             </thead>
+
             <tbody id="tbody">
 
             </tbody>
@@ -78,5 +81,88 @@
     </div>
 </div>
  
+
+<script>
+const searchField=document.querySelector('#searchField');
+const tbody=document.querySelector('#tbody')
+const paginationContainer=document.querySelector('.pagination_container')
+
+const appTable=document.querySelector('.list-table');
+
+const tableOutput =document.querySelector('#search-table');
+tableOutput.style.display='none';
+
+searchField.addEventListener('keyup',(e)=>{
+    const searchValue = e.target.value;
+    //console.log(searchValue)
+    if(searchValue.length>0){
+        tbody.innerHTML='';
+        paginationContainer.style.display='none';
+
+        fetch("/groups/search_groups",{
+            body:JSON.stringify({searchText:searchValue}),
+            method:"POST",
+        }).then(res => res.json()).then(data => {
+            console.log('here')
+            appTable.style.display='none';
+            tableOutput.style.display='block';
+            console.log(data)
+               if(data.length===0){
+                console.log('there')
+                   tbody.innerHTML="no data found";
+               }
+               else{
+
+                data.forEach(element => {
+                    console.log(element.is_admin)
+                    if(element.is_admin){
+                    tbody.innerHTML+=  `
+                    <tr>
+                    <td> ${element.group_name} </td>
+                    <td> ${element.is_admin} </td>
+                    <td> <a href="/groups/exit_group/${element.group_name}/${element.user}"> Leave ${element.group_name}</a> </td>
+                    <td> <a href="/groups/group_details/${element.group_name}"> <i class="fa fa-eye"></i></a> </td>
+                    <td> <a href="/groups/edit_group/${element.group_name}"> <i class="fa fa-pencil"></i></a> </td>
+                    </tr>
+                    
+                    `;
+                    }
+                    else{
+                        console.log(element.group_name)
+                        tbody.innerHTML+=  `
+                    <tr>
+                    <td> ${element.group_name} </td>
+                    <td> ${element.is_admin} </td>
+                    <td> <a href="/groups/exit_group/${element.group_name}/${element.user}"> ${element.group_name}</a> </td>
+                    <td> <a href="/groups/group_details/${element.group_name}"> <i class="fa fa-eye"></i></a> </td>
+                    <td> <i class="disabled fa fa-pencil"></i> </td>
+                    </tr>
+                    
+                    `;
+                    }
+                });
+                 
+                 
+               }
+
+        });
+    }
+    else{
+        appTable.style.display='block';
+        paginationContainer.style.display='block';
+        tableOutput.style.display='none';
+
+      }
+
+
+});
+
+const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+if(entry.type==="back_forward"){
+location.reload()
+}
+});
+</script>
 
 {% endblock %}

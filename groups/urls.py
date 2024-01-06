@@ -30,6 +30,9 @@ urlpatterns=[
     path('list_notification',csrf_exempt(views.get_notification),name='list_notification'),
     path('delete_notification/<int:id>',views.delete_notifications,name='delete_notification'),
     path('edit_group_expense/<int:id>',views.edit_group_expense,name='edit_group_expense'),
-    path('delete_individual_expense/<int:id>',views.delete_individual_expense,name='delete_individual_expense')
+    path('delete_individual_expense/<int:id>',views.delete_individual_expense,name='delete_individual_expense'),
+    path('search_groups',csrf_exempt(views.search_groups),name='search_groups'),
+    path('search_members/<str:group>',csrf_exempt(views.search_members),name='search_members'),
+    path('search_group_individual_expenses/<str:group>/<int:pk>',csrf_exempt(views.search_group_individual_expenses),name='search_group_individual_expenses')
     
 ]

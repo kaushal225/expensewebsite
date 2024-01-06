@@ -1,6 +1,16 @@
 {% extends 'partials/base.html' %}
 {% block content %}
     {% include 'partials/_messages.html' %}
+    <div class="container ml-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <input type="text" placeholder="search" id="searchField" class="form-control" autocomplete="off">
+                </div>
+                
+            </div>
+        </div>
+    </div>
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-9">
@@ -10,7 +20,7 @@
             </div>
         </div>
         {% if expenses.count %}
-        <div class="row">
+        <div class="row list-table">
             <table class="table table-stripped table-hover">
                 <thead>
                     <th>name</th>
@@ -26,7 +36,12 @@
                             <td>{{expense.expense_amount}}</td>
                             <td>{{expense.expense_date}}</td>
                             <td>{{expense.description}}</td>
+                            {% if request.user == expense.individual_name %}
                             <td><a href="{% url 'edit_group_expense' expense.id %}" ><i class="fa fa-pencil"></i></a></td>
+                            {% else %}
+                            <td><i class="disabled fa fa-pencil"></i></td>
+                            {% endif %}
+                            
                         </tr>
                         
                     {% endfor %}
@@ -51,12 +66,101 @@
         </div>
         {% endif %}
     </div>
-    <script>
-        const entries=performance.getEntriesByType("navigation");
-    entries.forEach((entry)=>{
-      if(entry.type==="back_forward"){
-        location.reload()
-      }
-    });
-    </script>
+
+<div class="search-table">
+    <table class="table table-stripped table-hover">
+        <thead>
+            <th>expense</th>
+            <th>date</th>
+            <th>description</th>
+            <th>Edit</th>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+
+</div>
+
+<script defer>
+const entries=performance.getEntriesByType("navigation");
+entries.forEach((entry)=>{
+  if(entry.type==="back_forward"){
+    location.reload()
+  }
+});
+
+const paginationcontainer=document.querySelector('.pagination_container');
+const display_table=document.querySelector('.search-table');
+const hide_table=document.querySelector('.list-table');
+const tbody=document.querySelector('#tbody');
+
+const searchbutton=document.querySelector('#searchField');
+
+display_table.style.display='none';
+
+console.log(tbody)
+
+searchbutton.addEventListener('keyup',(e)=>{
+    SearchText=e.target.value;
+    if(SearchText.length>0){
+        tbody.innerHTML=''
+        paginationcontainer.style.display='none';
+
+        fetch('/groups/search_group_individual_expenses/{{group}}/{{pk}}',{
+            method:'POST',
+            body:JSON.stringify({'SearchText':SearchText})
+        }).then((data)=>data.json()).then((elements)=>{
+            hide_table.style.display='none';
+            display_table.style.display='block';
+
+            if(elements.length<=1){
+                tbody.innerHTML='no element found'
+            }
+            
+
+            else{
+            last=elements[elements.length-1]
+            elements.pop()
+            elements.forEach(element=>{
+                console.log('here')
+                if(element.individual_name_id===last.request_user){
+                tbody.innerHTML+=`
+                <tr>
+                    <td> ${element.expense_amount} </td>
+                    <td> ${element.expense_date} </td>
+                    <td> ${element.description} </td>
+                    <td> <a class="btn btn-sm btn-primary" href="/groups/edit_group_expense/${element.id}"> <i class="fa fa-pencil"></i></a> </td>
+                    </tr>
+                    
+
+                `
+                }
+                else{
+                    tbody.innerHTML+=`
+                <tr>
+                    <td> ${element.expense_amount} </td>
+                    <td> ${element.expense_date} </td>
+                    <td> ${element.description} </td>
+                    <td> <i class="disabled fa fa-pencil"></i></td>
+                    </tr>
+                    
+
+                `
+                }
+            })
+        } 
+
+        })
+
+
+    }
+    else{
+        paginationcontainer.style.display='block'; 
+        hide_table.style.display='block';
+        display_table.style.display='none';
+    }
+});
+
+</script>
 {% endblock %}

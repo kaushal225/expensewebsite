@@ -31,14 +31,15 @@
         </div>
     </div>
 
-    <script>
-        const entries=performance.getEntriesByType("navigation");
+<script defer>
+    const entries=performance.getEntriesByType("navigation");
     entries.forEach((entry)=>{
       if(entry.type==="back_forward"){
+        console.log('hello')
         window.history.back()
       }
     });
-    </script>
+</script>
 </body>
 
 </html>
