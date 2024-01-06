@@ -48,7 +48,7 @@
 </div>
 {% endif %}
 
-<script>
+<script defer>
     const entries=performance.getEntriesByType("navigation");
 entries.forEsach((entry)=>{
   if(entry.type==="back_forward"){

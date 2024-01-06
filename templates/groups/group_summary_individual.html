@@ -25,7 +25,14 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" defer>
+        const entries=performance.getEntriesByType("navigation");
+    entries.forEach((entry)=>{
+      if(entry.type==="back_forward"){
+        location.reload()
+      }
+    });
+
     function individual_summary(labels,data){
         var context=document.querySelector('#myChart').getContext('2d');
         new Chart(context,{
