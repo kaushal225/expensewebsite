@@ -6,10 +6,17 @@
     {% if count %}
         {% for notification in notifications %}
         {% if notification.request_denied %}
-            <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}} has denied the request to join {{notification.group}} on {{notification.date}}  </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+            {% if notification.admin_involved %}
+                <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}} has denied to join {{notification.group}} on {{notification.date}} by {{notification.admin_involved}} </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+            {% else %}
+                <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}} has denied the request to join {{notification.group}} on {{notification.date}}  </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+            {% endif %}
         {% elif notification.request_accepted %}
-            <script>console.log('reqeust accepted')</script>
-            <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}} has accepted the request to join {{notification.group}}  on {{notification.date}} </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+            {% if notification.admin_involved %}
+                <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}} request to join {{notification.group}} on {{notification.date}} has been accepted by {{notification.admin_involved}} </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+            {% else %}
+                <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}} has accepted the request to join {{notification.group}}  on {{notification.date}} </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>
+            {% endif %}
         {% elif notification.admin_status_change %}
         <div class="alert alert-primary" style=" width: 70%; display: flex; justify-content: space-between;"><p> {{notification.user_involved}}'s  admin status has been changed in the {{notification.group}} by {{notification.admin_involved}} on {{notification.date}}  </p> <a href="{% url 'delete_notification' notification.id %}" class="btn btn-primary" ><i class="fa-solid fa-x"></i> </a></div>        
         {% elif notification.admin_involved and notification.user_involved %}

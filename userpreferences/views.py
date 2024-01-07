@@ -25,6 +25,8 @@ from .models import UserPreferences
 from django.contrib import messages
 from expenses.models import Expense
 from django.contrib.auth.models import User
+from groups import models as group_models
+from groups import views as group_views
 # Create your views here.
 
 
@@ -55,8 +57,8 @@ def index(request):
             print(previous_currency)
             if previous_currency!=currency:
                 options=webdriver.ChromeOptions()
-                options.add_argument("--headless")
-                driver =webdriver.Chrome()
+                options.add_argument("--headless=new")
+                driver =webdriver.Chrome(options=options)
                 driver.get("https://www.google.com/search?q=free+currency+converter")
                 elem = Select(driver.find_element(By.CLASS_NAME, "zuzy3c"))
                 elem.select_by_visible_text(previous_currency)
@@ -94,6 +96,16 @@ def delete_user_acount(request,user):
     if request.method=='GET':
         return render(request,'partials/confirm_deletion.html',{'message':'do you really want to delete your account'})
     else:
+        groups_member=group_models.Members.objects.filter(member=request.user)
+        group_lists=[]
+        for group_member in groups_member:
+            print(group_member.group)
+            if(group_views.is_admin(request.user,group_member.group) and group_models.Admins.objects.filter(group=group_member.group).count()==1):
+                group_lists.append(group_member.group)
+            else:
+                group_views.exit_group(request,group_member.group,request.user.username)
+        if len(group_lists)>=1:
+            return render(request,'partials/pending_action.html',{ 'groups':group_lists })
         User.objects.get(username=user).delete()
         messages.warning(request,'your account is deleted successfully')
         return redirect('login')

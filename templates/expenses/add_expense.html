@@ -41,10 +41,12 @@
   </div>
 </div>
 <script defer>
+    console.log('there')
     const entries=performance.getEntriesByType("navigation");
 entries.forEach((entry)=>{
   if(entry.type==="back_forward"){
-    location.reload();
+    console.log('here')
+    location.reload()
   }
 });
 </script>

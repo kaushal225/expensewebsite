@@ -393,6 +393,7 @@ def accept_request_group(request,group,user):
         models.Members.objects.create(group=group,member=user)
         models.Group_summary.objects.create(group_name=group,member_name=user,member_total_contribution=0)
         models.Inbox.objects.get(group=group,sent=True,user=user).delete()
+        create_notification(group.group_name,user.username,admin_involved=request.user.username,request_accepted=True)
         return redirect('group_details',group)
     messages.error(request,'unauthorized access')
     return redirect('group_details',group)
@@ -403,6 +404,8 @@ def deny_request_group(request,group,user):
     if is_admin(request.user,group):
         user=User.objects.get(username=user)
         models.Inbox.objects.get(group=group,sent=True,user=user).delete()
+        create_notification(group,user.username,admin_involved=request.user.username,request_denied=True)
+        models.Group_notification.objects.create(group=group,user_notification_for=user,user_involved=user.username,admin_involved=request.user,request_denied=True)
         return redirect('group_details',group)
     messages.error(request,'unauthorized access')
     return redirect('group_details',group)
@@ -538,7 +541,7 @@ def group_stat_individual(request):
 
 @login_required(login_url='/authentication/login')  
 def exit_group(request,group,user):
-    print(user)
+    print('user is ',type(user),'request.user is',type(request.user.username))
     if(request.user.username!=user):
         messages.warning(request,'You are not authorized to do this operation')
         return redirect('expenses')
@@ -546,6 +549,7 @@ def exit_group(request,group,user):
         context={'message':'do you really want to leave ' + str(group)}
         return render(request,'partials/confirm_deletion.html',context)
     else:
+        
         user=User.objects.get(username=user)
 
         group=models.Custom_groups.objects.get(group_name=group)
@@ -557,6 +561,7 @@ def exit_group(request,group,user):
                         models.Admins.objects.get(user=user,group=group).delete()
                     else:
                         messages.warning(request,'please add atleast one admin before leaving the group')
+                        return redirect('edit_group',group)
                         return get_group_details(request,group)
         
             models.Members.objects.get(group=group,member=user).delete()
@@ -564,7 +569,7 @@ def exit_group(request,group,user):
                 models.Group_individual_expenses.objects.filter(individual_name=user,group=group).delete()
             models.Group_summary.objects.get(group_name=group,member_name=user).delete()
             create_notification(group.group_name,user.username)
-
+    messages.success(request,'you have successfully exited the group '+str(group))
     return redirect('expenses')
 
 

@@ -1,0 +1,25 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+    {% include 'partials/_messages.html' %}
+    <p class= " alert alert-warning">add atleast one more admin in following groups before deleting your account </p>
+    <table class="table table-stripped">
+        <thead>
+            <td>group name</td>
+            <td>edit</td>
+        </thead>
+        {% for group in groups %}
+            <td>{{group}}</td>
+            <td><a href="{% url 'edit_group' group %}"><i class="fa fa-pencil"></i></a></td>
+
+        {% endfor %}
+    </table>
+<script defer>
+  const entries=performance.getEntriesByType("navigation");
+  entries.forEach((entry)=>{
+  if(entry.type==="back_forward"){
+    location.reload()
+  }
+});
+</script>
+
+{% endblock %}
